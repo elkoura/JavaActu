@@ -42,6 +42,15 @@ public class FXApp extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Je veux me connecter !!!!!");
+                Stage stage = new Stage();
+                Connexion ConnWin = new Connexion();
+                try {
+					ConnWin.start(stage);
+					stage.show();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -52,6 +61,16 @@ public class FXApp extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Je veux créer un compte !!!!!");
+                
+                Stage stage = new Stage();
+                Inscription InscWin = new Inscription();
+                try {
+					InscWin.start(stage);
+					stage.show();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
