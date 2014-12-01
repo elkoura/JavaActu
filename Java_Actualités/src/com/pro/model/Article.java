@@ -14,11 +14,20 @@ public class Article {
 	private String extraire_article = null;
 	private String source = null;
 	private String urlImage = null;
+	private int    rssId = 0;
 
 	
-
 	/* ******************** getters et setters *************
 	   ***************************************************** */
+	public int getRssId() {
+		return rssId;
+	}
+
+	public void setRssId(int rssId) {
+		this.rssId = rssId;
+	}
+
+	
 	public String getTitre() {
 		return titre;
 	}

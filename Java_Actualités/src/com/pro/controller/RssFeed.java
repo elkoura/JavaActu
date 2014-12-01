@@ -36,10 +36,13 @@ public class RssFeed {
 	}
 
 
-	public String parseRss(String _nom, String _url) throws ClassNotFoundException, SQLException {
+	public String parseRss(String _nom, String _url) 
+			throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
 
+		BDD conn = new BDD();
 		rss.setNom(_nom);
 		rss.setUrl(_url);
+		rss.setId(conn.addRss(rss));
 
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
@@ -50,7 +53,7 @@ public class RssFeed {
 			NodeList nodes = null;
 			Node element = null;
 
-			/**
+			/*
 			 * Titre du flux
 			 */
 			nodes = doc.getElementsByTagName("channel");
@@ -66,18 +69,39 @@ public class RssFeed {
 			nodes = doc.getElementsByTagName("item");
 			int l = 0;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				if(i>9) break;
+				
 				element = nodes.item(i);
+				
+				/*
+				 * extraire la partie du date pour construire le SQL.date
+				 */
+				String pubDateString = readNode(element, "pubDate");
+				pubDateString = pubDateString.replaceAll(" ", "");
+				pubDateString = pubDateString.substring(4, 6) + "-"
+						+ pubDateString.substring(6, 9) + "-"
+						+ pubDateString.substring(9, 13);
 
-				System.out.println("Titre: " + readNode(element, "title"));
+				/* 
+				 * construire les champs de l'aticle
+				 */
+				
+				
 				article.setTitre(this.readNode(element, "title"));
-
-				System.out.println("Lien: " + readNode(element, "link"));
-				article.setLink(this.readNode(element, "link"));
-
-				System.out.println("Description: "
-						+ readNode(element, "description").trim());
 				article.setDescription(this.readNode(element, "description").trim());
+				article.setLink(this.readNode(element, "link"));
+				article.setPubdate(stringDateToSqlDate(pubDateString));
+				article.setExtraire_article(extractLink(article.getLink()));
+				article.setSource(rss.getNom());
+				article.setUrlImage(extractUrlImage(article.getLink()));
+				article.setRssId(rss.getId());
+				
+				/* -------------------------------------------------- */
+				
+				
+				System.out.println("Titre: " + readNode(element, "title"));
+				System.out.println("Lien: " + readNode(element, "link"));
+				System.out.println("Description: " + readNode(element, "description").trim());
+				
 
 				/* ******** découper l'url et extraire que la premier partie 
 				 *   pour la source
@@ -95,25 +119,22 @@ public class RssFeed {
 				}
 
 				System.out.println("Source: " + s.substring(0, j - 1));
-				System.out.println("Date de publication: "
-						+ readNode(element, "pubDate"));
-				String pubDateString = readNode(element, "pubDate");
-				pubDateString = pubDateString.replaceAll(" ", "");
-				pubDateString = pubDateString.substring(4, 6) + "-"
-						+ pubDateString.substring(6, 9) + "-"
-						+ pubDateString.substring(9, 13);
-
+				System.out.println("Date de publication: " + readNode(element, "pubDate"));
 				System.out.println(pubDateString);
-				article.setSource(rss.getNom());
-				article.setPubdate(stringDateToSqlDate(pubDateString));
-				System.out.println();
-				article.setSource(rss.getNom());
-				System.out.println(extractLink(article.getLink()));
+				System.out.println("le corps :  " +extractLink(article.getLink()));
+				System.out.println(article.getUrlImage());
+				
+				
+				//System.out.println(extractLink(article.getLink()));
+				//System.out.println("le corps de l'article"+ readNode(element, "content:encoded")+"\n\n");
 
-				article.setExtraire_article(extractLink(article.getLink()));
-				article.setUrlImage(extractUrlImage(article.getLink()));
+				//article.setExtraire_article(extractLink(article.getLink()));
+				
+				//article.setExtraire_article("vide pour le test");
+				//article.setUrlImage(extractUrlImage(article.getLink()));
+				//article.setRssId(rss.getId());
 
-				//article.InsertDbArticle(this.getNom(), this.getId());
+				conn.addArticle(article);
 				l = l + 1;
 			}
 
@@ -125,6 +146,10 @@ public class RssFeed {
 			System.out.println("erreur IOException");
 		} catch (ParserConfigurationException ex) {
 			System.out.println("erreur ParserConfigurationException");
+		}
+		
+		finally{
+			conn.close();
 		}
 
 		return null;
@@ -198,15 +223,15 @@ public class RssFeed {
 	public String extractLink(String _link) throws IOException {
 		org.jsoup.nodes.Document document = Jsoup.connect(_link).get();
 
-		Element ele, ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8, ele9, ele10, ele11, ele12, ele13, ele14, ele15 = null;
+		Element ele, ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8, ele9, ele10, ele11, ele12, ele13, ele14, ele15,ele16 = null;
 
-		ele = document.select("div .texte").first();
+		ele = document.select("div .texte").first(); // le parisien
 		ele1 = document.select("div .texte-global clearfix").first();
 		ele2 = document.select("div .texte-global").first();
-		ele3 = document.select("div .articleBody").first();
+		ele3 = document.select("div .articleBody").first(); // l'équipe
 		ele4 = document.select("div .article_content").first();
 		ele5 = document.select("div .mna-body").first();
-		ele6 = document.select("div .fig-article-body").first();
+		ele6 = document.select("div .fig-article-body").first(); // le figaro
 		ele7 = document.select("div .contenu_article").first();
 		ele8 = document.select("div .mod").select("div .article-body mod")
 				.first();
@@ -217,38 +242,39 @@ public class RssFeed {
 		ele13 = document.select("div .paragr.paragraf2.paragimage").first();
 		ele14 = document.select("div .paragr.paragraf2").first();
 		ele15 = document.select("div .figaro-content-body-col").first();
+		ele16 = document.select("div .entry").first(); // pour le site lapresse.ca
 
 		if (ele != null) {
 			String text = ele.text();
-			return text+"0";
+			return text;
 		}
 		if (ele1 != null) {
 			String texte1 = ele1.text();
-			return texte1+"1";
+			return texte1;
 		}
 		if (ele2 != null) {
 			String texte2 = ele2.text();
-			return texte2+"2";
+			return texte2;
 		}
 		if (ele3 != null) {
 			String texte2 = ele3.text();
-			return texte2+"3";
+			return texte2;
 		}
 		if (ele4 != null) {
 			String texte2 = ele4.text();
-			return texte2+"4";
+			return texte2;
 		}
 		if (ele5 != null) {
 			String texte2 = ele5.text();
-			return texte2+"5";
+			return texte2;
 		}
 		if (ele6 != null) {
 			String texte2 = ele6.text();
-			return texte2+"6";
+			return texte2;
 		}
 		if (ele7 != null) {
 			String texte2 = ele7.text();
-			return texte2+"7";
+			return texte2;
 		}
 		if (ele8 != null) {
 			String texte2 = ele8.text();
@@ -279,7 +305,11 @@ public class RssFeed {
 		if (ele15 != null) {
 			String texte2 = ele15.text();
 			return texte2;
-		} else {
+		}
+		if (ele16 != null) {
+			String texte2 = ele16.text();
+			return texte2;
+		}else {
 			return null;
 		}
 	}
@@ -301,6 +331,7 @@ public class RssFeed {
 		Element imageEchos2 = null;
 		Element image20Minutes = null;
 		Element imageEquipe = null;
+		Element imageLactualite = null;
 
 		image = document.select("div .visuelMain img").first();
 		imageNYT = document.select("div .image a img").first();
@@ -323,6 +354,7 @@ public class RssFeed {
 		imageEchos2 = document.select("div .m-photo.Left a img").first();
 		image20Minutes = document.select("div .mna-image aside img").first();
 		imageEquipe = document.select("div .bigleaderpix img").first();
+		imageLactualite = document.select("div .image-block").select("img").first();
 
 		if (image != null) {
 			String url = image.absUrl("src");
@@ -383,19 +415,23 @@ public class RssFeed {
 		if (imageEquipe != null) {
 			String url = imageEquipe.absUrl("src");
 			return url;
-		} else {
+		}
+		if (imageLactualite != null) {
+			String url = imageLactualite.absUrl("src");
+			return url;
+		}else {
 			return null;
 		}
 	}
 
 
 	public static void main(String[] args) throws ClassNotFoundException,
-	SQLException {
+	SQLException, InstantiationException, IllegalAccessException {
 
 		RssFeed r = new RssFeed();
 
-		r.parseRss("Le Figaro",
-				"http://www.lefigaro.fr/rss/figaro_une.xml"); // OK
+		r.parseRss("La presse",
+				"http://www.lapresse.ca/rss/225.xml"); // OK
 
 
 	}
