@@ -16,7 +16,27 @@ public class Article {
 	private String urlImage = null;
 	private int    rssId = 0;
 
-	
+
+        public Article(int x) {     // Constructeur Bidon de débug
+            this(x+"TITRE TEST blabla", x+"DESCRIPTION blablablablablablablablablablablabla",
+                    x+"http://TESTLINK.mdr", new Date(new Long("1417561746190")), x+"http://URLIMAGE.img");
+        }
+        
+        public Article() {      // Constructeur Bidon de débug
+            this("TITRE TEST blabla", "DESCRIPTION blablablablablablablablablablablabla",
+                    "http://TESTLINK.mdr", new Date(new Long("1417561746190")), "http://URLIMAGE.img");
+        }
+
+        public Article(String titre, String description, String link, Date pubdate, String urlImage) {
+            this.titre = titre;
+            this.description = description;
+            this.link = link;
+            this.pubdate = pubdate;
+            this.urlImage = urlImage;
+        }
+
+        
+        
 	/* ******************** getters et setters *************
 	   ***************************************************** */
 	public int getRssId() {

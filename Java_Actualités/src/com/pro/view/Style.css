@@ -5,6 +5,31 @@
 */
 
 #TopButtons {
-    -fx-font-family: "Arial Narrow";
+    -fx-background-color:
+        linear-gradient(#f2f2f2, #d6d6d6),
+        linear-gradient(#fcfcfc 0%, #d9d9d9 20%, #d6d6d6 100%),
+        linear-gradient(#dddddd 0%, #f6f6f6 50%);
+    -fx-background-radius: 8,7,6;
+    -fx-background-insets: 0,1,2;
+    -fx-text-fill: black;
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+#TopButtons:hover {
+    -fx-background-color:
+        linear-gradient(from 0% 93% to 0% 100%, #135aa3 0%, #122790 100%),
+        radial-gradient(center 50% 50%, radius 100%, #b3e1fc, #b3e1fc);
+}
+
+#topRightBox {
+    -fx-background-color: #21b9f0;
+}
+
+#articleNode:hover {
+    
+    -fx-background-color:
+        linear-gradient(#e2e2e2 0%, #c9c9c9 20%, #c9c9c9 80%, #e2e2e2 100%),
+        linear-gradient(#e2e2e2 0%, #c9c9c9 20%, #c9c9c9 80%, #e2e2e2 100%);
+        -fx-background-insets: 0,5;
+        -fx-background-radius: 9,8;
 }
