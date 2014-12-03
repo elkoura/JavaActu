@@ -1,5 +1,6 @@
 package com.pro.view;
 
+import com.pro.controller.Langage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,7 +15,7 @@ public class Inscription extends Application {
     
         Scene scene = new Scene(root, 330, 380);
     
-        stage.setTitle("Inscription");
+        stage.setTitle(Langage.INSCRIPTION);
         stage.setScene(scene);
         stage.show();
     }

@@ -6,6 +6,17 @@ public class FluxRSS {
 	private String nom;
 	private String url;
 	
+        
+        /* Constructeurs de débug !!!!  */
+        public FluxRSS() {
+            this("toto", "rand="+new java.util.Random().toString());
+        }
+        
+        /* Constructeurs de débug !!!!  */
+        public FluxRSS(String nom, String url) {
+            this.nom = nom;
+            this.url = url;
+        }
 	
 	public int getId() {
 		return id;

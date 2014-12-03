@@ -1,7 +1,8 @@
 package com.pro.view;
 
+import com.pro.controller.Langage;
 import com.pro.model.Article;
-import java.net.CookieHandler;
+import com.pro.model.FluxRSS;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -13,28 +14,24 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class FXApp extends Application {
-
+    
     public FXApp() {
-        System.out.println("Constructeur");
+        Langage.chargerFichierLangue("build/classes/com/pro/ressources/fr.lang");
+        System.out.println("Constructeur de FXApp");
     }
 
     @Override
@@ -45,7 +42,7 @@ public class FXApp extends Application {
         topStack.setAlignment(Pos.CENTER_LEFT);
         //topStack.setPadding(new Insets(15, 12, 15, 12));
 
-        ImageView logo = new ImageView("com/pro/view/images/Logo.png");
+        ImageView logo = new ImageView(Langage.RESSOURCE_PATH + "images/Logo.png");
         logo.setPreserveRatio(true);
         logo.setFitWidth(150);
 
@@ -56,7 +53,7 @@ public class FXApp extends Application {
         topRightBox.setSpacing(20);
         topRightBox.setAlignment(Pos.CENTER_RIGHT);
 
-        Button connexion = new Button("Connection");
+        Button connexion = new Button(Langage.CONNEXION);
         connexion.setId("TopButtons");
         connexion.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -74,7 +71,7 @@ public class FXApp extends Application {
             }
         });
 
-        Button newAccount = new Button("Créer un compte");
+        Button newAccount = new Button(Langage.CREER_COMPTE);
         newAccount.setId("TopButtons");
         newAccount.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -97,7 +94,7 @@ public class FXApp extends Application {
         topStack.getChildren().addAll(topRightBox, logo);
 
 
-        //   =========   Crée la liste des articles   =========
+        //   =========   Crée la liste des articles et l'affichage du centre   =========
         ArrayList<Article> articleList = new ArrayList<>();
         // REMPLACER CES FAUSSES INSTANCES PAR LES VRAIS ARTICLES !!
         articleList.add(new Article(1));
@@ -114,10 +111,29 @@ public class FXApp extends Application {
         ScrollPane articlesView = new ScrollPane(articleBox);
         
 
+        //  =========  Barre de gauche  =========
+        ArrayList<FluxRSS> rssList = new ArrayList<>();
+        rssList.add(new FluxRSS("FIRST", "hey :)"));
+        rssList.add(new FluxRSS());
+        rssList.add(new FluxRSS());
+        rssList.add(new FluxRSS());
+        rssList.add(new FluxRSS());
+        rssList.add(new FluxRSS());
+        rssList.add(new FluxRSS());
+        rssList.add(new FluxRSS());
+        rssList.add(new FluxRSS());
+        rssList.add(new FluxRSS());
+        Label fluxRSS = new Label(Langage.SOURCES);
+        fluxRSS.setId("LabelSrcFlux");
+        VBox leftBox = new VBox(fluxRSS);
+        leftBox.setPrefWidth(300);
+        leftBox.setPadding(new Insets(10, 10, 10, 10));
+        addAllRSS(leftBox, rssList);
        
         //   =========   Met les éléments dans la fenêtre   =========
         BorderPane root = new BorderPane();
         root.setTop(topStack);
+        root.setLeft(leftBox);
         root.setCenter(articlesView);
 
         Scene scene = new Scene(root, 1200, 675);
@@ -126,34 +142,23 @@ public class FXApp extends Application {
         addMouseEnter_ExitEvents(scene, newAccount);
         addMouseEnter_ExitEvents(scene, articlesView);
 
-        primaryStage.setTitle("Actu Java");
+        primaryStage.setTitle(Langage.ACTUJAVA);
         primaryStage.setScene(scene);
-        primaryStage.setOnCloseRequest( new EventHandler<WindowEvent>() {
-
-            @Override
-            public void handle(WindowEvent event) {
-                System.out.println("L'application se ferme !!!");
-                System.exit(0);
-            }
+        primaryStage.setOnCloseRequest( (WindowEvent event) -> {
+            System.out.println("L'application se ferme !!!");
+            System.exit(0);
         });
 
         primaryStage.show();
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     private void addAllArticles(VBox articleBox, ArrayList<Article> articleList) {
         for(Article artI : articleList) {
-            ImageView image = new ImageView("com/pro/view/images/articleImg.jpg");
+            ImageView image = new ImageView(Langage.RESSOURCE_PATH + "images/articleImg.jpg");
             image.setPreserveRatio(true);
             image.setFitHeight(80);
 
-            ImageView favoris = new ImageView("com/pro/view/images/favorisON.png");
+            ImageView favoris = new ImageView(Langage.RESSOURCE_PATH + "images/favorisON.png");
             favoris.setPreserveRatio(true);
             favoris.setFitWidth(25);
             VBox vbFavoris = new VBox(favoris);
@@ -167,12 +172,8 @@ public class FXApp extends Application {
             articleNode.setPadding(new Insets(5, 15, 5, 15));
             articleNode.setSpacing(18);
             articleNode.setId("articleNode");
-            articleNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent event) {
-                    System.out.println("Je veux afficher l'Article "+artI.getTitre());
-                }
+            articleNode.setOnMouseClicked((MouseEvent event) -> {
+                System.out.println("Je veux afficher l'Article "+artI.getTitre());
             });
             articleBox.getChildren().addAll(articleNode, new Separator(Orientation.HORIZONTAL));
         }
@@ -180,23 +181,36 @@ public class FXApp extends Application {
 
     private void addMouseEnter_ExitEvents(Scene scene, Node node) {
         // La souris entre  => Cursor = main
-        node.setOnMouseEntered(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event) {
-                scene.setCursor(Cursor.HAND);
-            }
+        node.setOnMouseEntered((MouseEvent event) -> {
+            scene.setCursor(Cursor.HAND);
         });
         
         // La souris sort  => Cursor = normal
-        node.setOnMouseExited(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event) {
-                scene.setCursor(Cursor.DEFAULT);
-            }
+        node.setOnMouseExited((MouseEvent event) -> {
+            scene.setCursor(Cursor.DEFAULT);
         });
     }
+
+    private void addAllRSS(VBox leftBox, ArrayList<FluxRSS> rssList) {
+        for(FluxRSS flux : rssList) {
+            CheckBox chkBoite = new CheckBox("labvel CHeckbox");
+            chkBoite.setOnAction((ActionEvent event) -> {
+                System.out.println("CheckBox"+flux.getId() + " is "+chkBoite.isSelected());
+            });
+            
+            Label nom = new Label(flux.getNom());
+            HBox box = new HBox(chkBoite, nom);
+            box.setSpacing(15);
+            box.setPadding(new Insets(5, 10, 5, 20));
+            leftBox.getChildren().add(box);
+        }
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
 }
-
-
