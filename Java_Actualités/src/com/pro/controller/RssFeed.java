@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -423,6 +424,17 @@ public class RssFeed {
 			return null;
 		}
 	}
+	
+//	public void affiche() throws SQLException
+//	{
+//		BDD conn = new BDD();
+//		 ArrayList<Article> articleList = conn.articleList();
+//		 
+//		 for(Article artI : articleList)
+//		 {
+//			 System.out.println(artI.getTitre());
+//		 }
+//	}
 
 
 	public static void main(String[] args) throws ClassNotFoundException,
@@ -430,8 +442,10 @@ public class RssFeed {
 
 		RssFeed r = new RssFeed();
 
-		r.parseRss("La presse",
-				"http://www.lapresse.ca/rss/225.xml"); // OK
+		r.parseRss("Le parisien",
+				"http://www.lequipe.fr/rss/actu_rss.xml"); // OK
+		
+		
 
 
 	}
