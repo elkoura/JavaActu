@@ -43,7 +43,7 @@
         
      <HBox spacing="10" alignment="bottom_right" 
         GridPane.columnIndex="1" GridPane.rowIndex="6">
-        <Button text="Valider"     
+        <Button fx:id="valide" text="Valider"     
         onAction="#handleSubmitButtonAction"/>
 </HBox>
 
