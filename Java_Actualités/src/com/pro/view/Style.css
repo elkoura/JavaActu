@@ -33,3 +33,9 @@
         -fx-background-insets: 0,5;
         -fx-background-radius: 9,8;
 }
+
+#LabelSrcFlux {
+    -fx-underline: true;
+    -fx-font-size: 12pt;
+    -fx-font-weight: bold;
+}
