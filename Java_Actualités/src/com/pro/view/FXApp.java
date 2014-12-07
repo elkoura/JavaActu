@@ -1,9 +1,23 @@
 package com.pro.view;
 
+
+
 import com.pro.controller.Langage;
 import com.pro.model.Article;
 import com.pro.model.FluxRSS;
+import com.pro.model.BDD;
+
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -28,14 +42,16 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class FXApp extends Application {
-    
+	 private BDD conn;
+	 
     public FXApp() {
-        Langage.chargerFichierLangue("build/classes/com/pro/ressources/fr.lang");
+        Langage.chargerFichierLangue("bin/com/pro/ressources/en.lang");
+        conn = new BDD();
         System.out.println("Constructeur de FXApp");
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws SQLException {
         
         //  =========  Barre du haut  =========
         StackPane topStack = new StackPane();
@@ -95,15 +111,9 @@ public class FXApp extends Application {
 
 
         //   =========   Crée la liste des articles et l'affichage du centre   =========
-        ArrayList<Article> articleList = new ArrayList<>();
+        ArrayList<Article> articleList = conn.articleList();
         // REMPLACER CES FAUSSES INSTANCES PAR LES VRAIS ARTICLES !!
-        articleList.add(new Article(1));
-        articleList.add(new Article(2));
-        articleList.add(new Article(3));
-        articleList.add(new Article(4));
-        articleList.add(new Article(5));
-        articleList.add(new Article(6));
-
+   
         VBox articleBox = new VBox();
         addAllArticles(articleBox, articleList);
         articleBox.setPadding(new Insets(15, 10, 15, 10));
@@ -154,13 +164,19 @@ public class FXApp extends Application {
 
     private void addAllArticles(VBox articleBox, ArrayList<Article> articleList) {
         for(Article artI : articleList) {
-            ImageView image = new ImageView(Langage.RESSOURCE_PATH + "images/articleImg.jpg");
+        	String url_img = artI.getUrlImage() ;
+        	if(url_img == null)
+        		url_img = "http://21virages.free.fr/blog/public/Caravane/2012/indisponible.jpg";
+        	javafx.scene.image.Image img = new javafx.scene.image.Image(url_img);
+            ImageView image = new ImageView();
+            image.setImage( img);
             image.setPreserveRatio(true);
-            image.setFitHeight(80);
+            image.setFitWidth(120);
+            image.setFitHeight(100);
 
-            ImageView favoris = new ImageView(Langage.RESSOURCE_PATH + "images/favorisON.png");
+            ImageView favoris = new ImageView(Langage.RESSOURCE_PATH + "images/favorisOFF.png");
             favoris.setPreserveRatio(true);
-            favoris.setFitWidth(25);
+            favoris.setFitWidth(15);
             VBox vbFavoris = new VBox(favoris);
             
             Label titre = new Label(artI.getTitre());
@@ -205,6 +221,8 @@ public class FXApp extends Application {
             leftBox.getChildren().add(box);
         }
     }
+   
+    
 
     /**
      * @param args the command line arguments

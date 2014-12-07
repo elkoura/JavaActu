@@ -1,0 +1,6 @@
+"Le Parisien","http://www.leparisien.fr/une/rss.xml"  images ok  problème de corps 
+"Le 360", "http://www.le360.ma/fr/rss" images ok  corps ok
+"lefigaro",	"http://www.lefigaro.fr/rss/figaro_une.xml" images ok  corps ok
+"ledevoir opinion", "http://www.ledevoir.com/rss/opinions.xml"  images ok  corps ok --> lien flux rss http://www.ledevoir.com/flux-rss
+		la une	-->		http://www.ledevoir.com/rss/manchettes.xml
+		

@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
+
 import com.pro.model.*;
 
 public class RssFeed {
@@ -53,6 +54,7 @@ public class RssFeed {
 			Document doc = builder.parse(url.openStream());
 			NodeList nodes = null;
 			Node element = null;
+		
 
 			/*
 			 * Titre du flux
@@ -70,18 +72,36 @@ public class RssFeed {
 			nodes = doc.getElementsByTagName("item");
 			int l = 0;
 			for (int i = 0; i < nodes.getLength(); i++) {
+				//if(i==2 )break;
 				
 				element = nodes.item(i);
+				
+				  
 				
 				/*
 				 * extraire la partie du date pour construire le SQL.date
 				 */
+				
+				
+				
+				
 				String pubDateString = readNode(element, "pubDate");
 				pubDateString = pubDateString.replaceAll(" ", "");
 				pubDateString = pubDateString.substring(4, 6) + "-"
 						+ pubDateString.substring(6, 9) + "-"
 						+ pubDateString.substring(9, 13);
 
+				
+				/*
+				 *	extraire l'image à l'aide de "enclosure 
+				 * 
+				 */
+				
+				
+				
+				
+				
+			
 				/* 
 				 * construire les champs de l'aticle
 				 */
@@ -91,17 +111,20 @@ public class RssFeed {
 				article.setDescription(this.readNode(element, "description").trim());
 				article.setLink(this.readNode(element, "link"));
 				article.setPubdate(stringDateToSqlDate(pubDateString));
-				article.setExtraire_article(extractLink(article.getLink()));
+				//article.setExtraire_article(extractLink(article.getLink()));
+				article.setExtraire_article("corps vide pour le moment");
 				article.setSource(rss.getNom());
 				article.setUrlImage(extractUrlImage(article.getLink()));
+				
 				article.setRssId(rss.getId());
 				
 				/* -------------------------------------------------- */
 				
 				
-				System.out.println("Titre: " + readNode(element, "title"));
-				System.out.println("Lien: " + readNode(element, "link"));
-				System.out.println("Description: " + readNode(element, "description").trim());
+				System.out.println("---Titre: " + readNode(element, "title"));
+				System.out.println("---Lien: " + readNode(element, "link"));
+				System.out.println("---Description: " + readNode(element, "description")
+						.replaceAll("<p>", " ").replaceAll("</p>"," ").trim());
 				
 
 				/* ******** découper l'url et extraire que la premier partie 
@@ -119,13 +142,13 @@ public class RssFeed {
 					j++;
 				}
 
-				System.out.println("Source: " + s.substring(0, j - 1));
-				System.out.println("Date de publication: " + readNode(element, "pubDate"));
+				System.out.println("---SOURCE : " + s.substring(0, j - 1));
+				System.out.println("---DATE DE PUBLICATION: " + readNode(element, "pubDate"));
 				System.out.println(pubDateString);
-				System.out.println("le corps :  " +extractLink(article.getLink()));
-				System.out.println(article.getUrlImage());
+				System.out.println("LE CORPS :  " +extractLink(article.getLink()));
+				System.out.println("---URL IMAGE : "+article.getUrlImage());
 				
-				
+				System.out.println("-------------------------------------------------------------------------");
 				//System.out.println(extractLink(article.getLink()));
 				//System.out.println("le corps de l'article"+ readNode(element, "content:encoded")+"\n\n");
 
@@ -137,6 +160,9 @@ public class RssFeed {
 
 				conn.addArticle(article);
 				l = l + 1;
+				
+				
+				
 			}
 
 
@@ -155,12 +181,122 @@ public class RssFeed {
 
 		return null;
 	}
+	
+	
+	public String parseRss2(String _nom, String _url) 
+			throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+
+		BDD conn = new BDD();
+		rss.setNom(_nom);
+		rss.setUrl(_url);
+		rss.setId(conn.addRss(rss));
+		
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
+
+			URL url = new URL(rss.getUrl());
+			Document doc = builder.parse(url.openStream());
+			NodeList nodes = null;
+			Node element = null;
+		
+			/**
+			 * Titre du flux
+			 */
+			nodes = doc.getElementsByTagName("channel");
+			Node node = doc.getDocumentElement();
+			System.out.println("Flux RSS: "
+					+ this.readNode(node, "channel|title"));
+			System.out.println();
+			/**
+			 * Elements du flux RSS
+			 **/
+
+			nodes = doc.getElementsByTagName("item");
+			int l = 0;
+			for (int i = 0; i < nodes.getLength(); i++) {
+				element = nodes.item(i);
+
+				System.out.println("Titre: " + readNode(element, "title"));
+				article.setTitre(this.readNode(element, "title"));
+
+				System.out.println("Lien: " + readNode(element, "link"));
+				article.setLink(this.readNode(element, "link"));
+
+				System.out.println("Description: "
+						+ readNode(element, "description")
+								.substring(
+										0,
+										readNode(element, "description")
+												.indexOf("<img"))
+								.replaceAll("<p>", "").replaceAll("</p>", " ").replaceAll( " (Agence QMI) <br />", " "));
+				article.setDescription(this
+						.readNode(element, "description")
+						.substring(
+								0,
+								readNode(element, "description")
+										.indexOf("<img")).replaceAll("<p>", "")
+						.replaceAll("</p>", " "));
+				String s = readNode(element, "link");
+				int j = 0;
+				int compte = 0;
+
+				while (compte < 3) {
+					if (s.charAt(j) == '/')
+						compte = compte + 1;
+					j = j + 1;
+				}
+
+				System.out.println("Source: " + s.substring(0, j - 1));
+				System.out.println("Date de publication: "
+						+ readNode(element, "pubDate"));
+				String pubDateString = readNode(element, "pubDate");
+				pubDateString = pubDateString.replaceAll(" ", "");
+				pubDateString = pubDateString.substring(4, 6) + "-"
+						+ pubDateString.substring(6, 9) + "-"
+						+ pubDateString.substring(9, 13);
+				System.out.println(pubDateString);
+				System.out.println("LE CORPS :  " +extractLink(article.getLink()));
+				System.out.println("---URL IMAGE : "+article.getUrlImage());
+				System.out.println("-----------------------------------");
+				
+				article.setTitre(this.readNode(element, "title"));
+				article.setDescription(this.readNode(element, "description").trim());
+				article.setLink(this.readNode(element, "link"));
+				article.setPubdate(stringDateToSqlDate(pubDateString));
+				//article.setExtraire_article(extractLink(article.getLink()));
+				article.setExtraire_article("corps vide pour le moment");
+				article.setSource(rss.getNom());
+				article.setUrlImage(extractUrlImage(article.getLink()));
+				
+				article.setRssId(rss.getId());
+				
+				conn.addArticle(article);
+				
+				
+				l = l + 1;
+			}
+
+			// out . close ();
+		} catch (SAXException ex) {
+			System.out.println("erreur SAXException");
+		} catch (IOException ex) {
+			System.out.println("erreur IOException");
+		} catch (ParserConfigurationException ex) {
+			System.out.println("erreur ParserConfigurationException");
+		}
+		
+		finally{
+			conn.close();
+		}
+		return null;
+	}
 
 
 	public String readNode(Node _node, String _path) {
 
 		String[] paths = _path.split("\\|");// divise la chaine paths en
-		// fonction \\
+		// fonction de |
 		Node node = null;
 
 		if (paths != null && paths.length > 0) {
@@ -177,7 +313,7 @@ public class RssFeed {
 		if (node != null) {
 			return node.getTextContent();
 		} else {
-			return "";
+			return "ERROR READING NODE"+_path;
 		}
 	}
 
@@ -224,9 +360,9 @@ public class RssFeed {
 	public String extractLink(String _link) throws IOException {
 		org.jsoup.nodes.Document document = Jsoup.connect(_link).get();
 
-		Element ele, ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8, ele9, ele10, ele11, ele12, ele13, ele14, ele15,ele16 = null;
+		Element ele, ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8, ele9, ele10, ele11, ele12, ele13, ele14, ele15,ele16,ele17,ele18 = null;
 
-		ele = document.select("div .texte").first(); // le parisien
+		ele = document.select("div .ctn").first(); // le 360
 		ele1 = document.select("div .texte-global clearfix").first();
 		ele2 = document.select("div .texte-global").first();
 		ele3 = document.select("div .articleBody").first(); // l'équipe
@@ -244,6 +380,8 @@ public class RssFeed {
 		ele14 = document.select("div .paragr.paragraf2").first();
 		ele15 = document.select("div .figaro-content-body-col").first();
 		ele16 = document.select("div .entry").first(); // pour le site lapresse.ca
+		ele17 = document.select("div .texte").first(); // pour le site ledevoir.ca
+		ele18 = document.select("div .mainArticleContent").first(); // pour le site ledevoir.ca
 
 		if (ele != null) {
 			String text = ele.text();
@@ -310,6 +448,14 @@ public class RssFeed {
 		if (ele16 != null) {
 			String texte2 = ele16.text();
 			return texte2;
+		}
+		if (ele17 != null) {
+			String texte2 = ele17.text();
+			return texte2;
+		}
+		if (ele18 != null) {
+			String texte2 = ele18.text();
+			return texte2;
 		}else {
 			return null;
 		}
@@ -333,7 +479,9 @@ public class RssFeed {
 		Element image20Minutes = null;
 		Element imageEquipe = null;
 		Element imageLactualite = null;
-
+		Element image360 = null;
+		Element imageLeDevoir = null;
+		Element imageCanoe = null;
 		image = document.select("div .visuelMain img").first();
 		imageNYT = document.select("div .image a img").first();
 		imageNYT2 = document.select(
@@ -356,6 +504,9 @@ public class RssFeed {
 		image20Minutes = document.select("div .mna-image aside img").first();
 		imageEquipe = document.select("div .bigleaderpix img").first();
 		imageLactualite = document.select("div .image-block").select("img").first();
+		image360 = document.select("div .full-item img").first(); // valide
+		imageLeDevoir = document.select(".photo_paysage img").first(); // valide
+		imageCanoe = document.select(".pictureSize1 img").first();
 
 		if (image != null) {
 			String url = image.absUrl("src");
@@ -420,7 +571,20 @@ public class RssFeed {
 		if (imageLactualite != null) {
 			String url = imageLactualite.absUrl("src");
 			return url;
-		}else {
+		}
+		if (image360 != null) {
+			String url = image360.absUrl("src");
+			return url;
+		}
+		if (imageLeDevoir != null) {
+			String url = imageLeDevoir.absUrl("src");
+			return url;
+		}
+		if (imageCanoe != null) {
+			String url = imageCanoe.absUrl("src");
+			return url;
+		}
+		else {
 			return null;
 		}
 	}
@@ -442,8 +606,8 @@ public class RssFeed {
 
 		RssFeed r = new RssFeed();
 
-		r.parseRss("Le parisien",
-				"http://www.lequipe.fr/rss/actu_rss.xml"); // OK
+		r.parseRss2("Le devoir",
+				"http://fr.canoe.ca/rss/feed/nouvelles/sports.xml"); // OK
 		
 		
 
