@@ -9,11 +9,10 @@ import javafx.stage.Stage;
 
 public class Connexion extends Application {
     
-	@Override
+    @Override
     public void start(Stage stage) throws Exception {
-       Parent root = FXMLLoader.load(getClass().getResource("Connexion.fxml"));
-    
-        Scene scene = new Scene(root, 300, 275);
+        Parent root = FXMLLoader.load(getClass().getResource("Connexion.fxml"));
+        Scene scene = new Scene(root, 330, 275);
     
         stage.setTitle(Langage.CONNEXION);
         stage.setScene(scene);

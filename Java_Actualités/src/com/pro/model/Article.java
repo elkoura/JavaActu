@@ -19,20 +19,21 @@ public class Article {
 
         public Article(int x) {     // Constructeur Bidon de débug
             this(x+"TITRE TEST blabla", x+"DESCRIPTION blablablablablablablablablablablabla",
-                    x+"http://TESTLINK.mdr", new Date(new Long("1417561746190")), x+"http://URLIMAGE.img");
+                    x+"http://TESTLINK.mdr", new Date(new Long("1417561746190"+x)), x+"http://URLIMAGE.img", x);
         }
         
         public Article() {      // Constructeur Bidon de débug
             this("TITRE TEST blabla", "DESCRIPTION blablablablablablablablablablablabla",
-                    "http://TESTLINK.mdr", new Date(new Long("1417561746190")), "http://URLIMAGE.img");
+                    "http://TESTLINK.mdr", new Date(new Long("1417561746190")), "http://URLIMAGE.img", 123);
         }
 
-        public Article(String titre, String description, String link, Date pubdate, String urlImage) {
+        public Article(String titre, String description, String link, Date pubdate, String urlImage, int rssId) {
             this.titre = titre;
             this.description = description;
             this.link = link;
             this.pubdate = pubdate;
             this.urlImage = urlImage;
+            this.rssId = rssId;
         }
 
         
@@ -103,7 +104,12 @@ public class Article {
 	public void setUrlImage(String urlImage) {
 		this.urlImage = urlImage;
 	}
-	
+        
 	/* ******************************************************* */
+        
+        @Override
+        public String toString() {
+            return "RSS"+rssId+" TITRE:"+titre;
+        }
 
 }

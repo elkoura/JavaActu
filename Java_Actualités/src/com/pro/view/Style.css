@@ -39,3 +39,16 @@
     -fx-font-size: 12pt;
     -fx-font-weight: bold;
 }
+
+#TitreArticle {
+    -fx-underline: true;
+    -fx-font-size: 11pt;
+    -fx-font-weight: bold;
+}
+
+#Date_source {
+    -fx-underline: true;
+    -fx-font-size: 9pt;
+    -fx-font-style: italic;
+    -fx-text-fill: #989696;
+}

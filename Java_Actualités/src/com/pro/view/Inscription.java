@@ -9,10 +9,9 @@ import javafx.stage.Stage;
 
 public class Inscription extends Application {
     
-	@Override
+    @Override
     public void start(Stage stage) throws Exception {
-       Parent root = FXMLLoader.load(getClass().getResource("Inscription.fxml"));
-    
+        Parent root = FXMLLoader.load(getClass().getResource("Inscription.fxml"));
         Scene scene = new Scene(root, 330, 380);
     
         stage.setTitle(Langage.INSCRIPTION);

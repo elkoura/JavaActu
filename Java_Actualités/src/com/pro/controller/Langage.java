@@ -13,12 +13,18 @@ public class Langage {
     public static String CREER_COMPTE;
     public static String SOURCES;
     public static String INSCRIPTION;
+    public static String AUTHENTIFICATION;
     public static String NOM;
     public static String EMAIL;
     public static String MDP;
+    public static String CONFIRM_MDP;
     public static String VALIDER;
+    public static String ANNULER;
+    public static String ERR_CONFIRM_MDP;
+    public static String ERR_CHAMP_VIDE;
+    public static String ERR_CONNECTION;
+    public static String CONNECTE;
     public static String ABIENTOT;
-    public static String AUTHENTIFICATION;
     
     public Langage() {
     }
@@ -35,17 +41,20 @@ public class Langage {
             if((CREER_COMPTE = br.readLine()) == null)      throw new RuntimeException("BAD TONGUE FILE");
             if((SOURCES = br.readLine()) == null)           throw new RuntimeException("BAD TONGUE FILE");
             if((INSCRIPTION = br.readLine()) == null)       throw new RuntimeException("BAD TONGUE FILE");
+            if((AUTHENTIFICATION = br.readLine()) == null)  throw new RuntimeException("BAD TONGUE FILE");
             if((NOM = br.readLine()) == null)               throw new RuntimeException("BAD TONGUE FILE");
             if((EMAIL = br.readLine()) == null)             throw new RuntimeException("BAD TONGUE FILE");
             if((MDP = br.readLine()) == null)               throw new RuntimeException("BAD TONGUE FILE");
+            if((CONFIRM_MDP = br.readLine()) == null)       throw new RuntimeException("BAD TONGUE FILE");
             if((VALIDER = br.readLine()) == null)           throw new RuntimeException("BAD TONGUE FILE");
-            if((ABIENTOT = br.readLine()) == null)           throw new RuntimeException("BAD TONGUE FILE");
-            AUTHENTIFICATION = br.readLine();       // Pas de vérif. OSEF si il y a qqch après !!
+            if((ANNULER = br.readLine()) == null)           throw new RuntimeException("BAD TONGUE FILE");
+            if((ERR_CONFIRM_MDP = br.readLine()) == null)   throw new RuntimeException("BAD TONGUE FILE");
+            if((ERR_CHAMP_VIDE = br.readLine()) == null)    throw new RuntimeException("BAD TONGUE FILE");
+            if((ERR_CONNECTION = br.readLine()) == null)    throw new RuntimeException("BAD TONGUE FILE");
+            if((CONNECTE = br.readLine()) == null)          throw new RuntimeException("BAD TONGUE FILE");
+            ABIENTOT = br.readLine();               // P as de vérif. OSEF si il y a qqch après !!
 
             br.close();
-        
-        
-        
         }		
         catch (RuntimeException | IOException  e){
             System.err.println("Couillonade dans Langage.java !!!!!!!!!!!" + e.getMessage());

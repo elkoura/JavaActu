@@ -4,9 +4,15 @@ Login
 Create account
 Sources
 Registration
+Authentication
 Name 
 E-mail
 Password
+Confirm password
 Submit
-Thank you good bye :D
-Authentication 
+Cancel
+Error ! The two passwords doesn't match.
+Error ! ALL fields are required.
+Error ! Login or Password is incorrect.
+You just logged In :)
+Thank you ! You are registered. Sign In ! :D

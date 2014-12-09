@@ -5,15 +5,20 @@ public class FluxRSS {
 	private int id;
 	private String nom;
 	private String url;
+        private String color;
 	
         
         /* Constructeurs de débug !!!!  */
         public FluxRSS() {
-            this("toto", "rand="+new java.util.Random().toString());
+            this("toto", "rand="+new java.util.Random().toString(), 0);
         }
         
+        public FluxRSS(int x) {
+            this("toto", "rand="+new java.util.Random().toString(), x);
+        }
         /* Constructeurs de débug !!!!  */
-        public FluxRSS(String nom, String url) {
+        public FluxRSS(String nom, String url, int id) {
+            this.id = id;
             this.nom = nom;
             this.url = url;
         }
@@ -36,7 +41,12 @@ public class FluxRSS {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	
 
+        public String getColor() {
+            return color;
+        }
+	
+        public void setColor(String color) {
+            this.color = color;
+        }
 }

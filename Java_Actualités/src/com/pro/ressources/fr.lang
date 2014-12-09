@@ -4,10 +4,15 @@ Connexion
 Créer un compte
 Sources
 Inscription
+Authentification
 Nom
 E-mail
 Mot de passe
+Confirmation
 Valider
-Merci à bientôt :D
-Authentification
-
+Annuler
+Erreur ! Les deux mots de passe ne correspondent pas.
+Erreur ! TOUS les champs sont obligatoires.
+Erreur ! E-mail ou mot de passe invalide.
+Vous êtes bien connecté :)
+Merci ! Vous êtes enregistrés. Connectez-vous ! :D
