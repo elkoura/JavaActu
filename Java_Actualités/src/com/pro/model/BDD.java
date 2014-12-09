@@ -194,7 +194,7 @@ public class BDD {
         } catch (ClassNotFoundException e) {
         }
         try {
-            connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/javanews", "root", "toor");
+            connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/javanews", "root", "azert");
         } catch (SQLException e) {
             e.printStackTrace();
         }

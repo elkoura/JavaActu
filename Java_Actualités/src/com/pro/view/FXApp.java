@@ -39,7 +39,7 @@ public class FXApp extends Application {
 	 
     public FXApp() {
         // complète les champs statics de la classe Langue
-        Langage.chargerFichierLangue("build/classes/com/pro/ressources/en.lang");
+        Langage.chargerFichierLangue("com/pro/ressources/en.lang");
 
         conn = new BDD();
         System.out.println("Constructeur de FXApp");
