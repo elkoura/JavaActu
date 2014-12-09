@@ -4,6 +4,7 @@ import com.pro.controller.Langage;
 import com.pro.model.Article;
 import com.pro.model.FluxRSS;
 import com.pro.model.BDD;
+import com.pro.model.User;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,11 +21,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -36,10 +40,11 @@ public class FXApp extends Application {
     private List<Article> articleList;
     //private final HashMap<Integer, String> couleurDuFlux;
     private final BDD conn;
+    private User currentUser = null;
 	 
     public FXApp() {
         // complète les champs statics de la classe Langue
-        Langage.chargerFichierLangue("com/pro/ressources/en.lang");
+        Langage.chargerFichierLangue("build/classes/com/pro/ressources/en.lang");
 
         conn = new BDD();
         System.out.println("Constructeur de FXApp");
@@ -74,12 +79,46 @@ public class FXApp extends Application {
             public void handle(ActionEvent event) {
                 System.out.println("Je veux me connecter !!!!!");
                 Stage stage = new Stage();
-                Connexion ConnWin = new Connexion();
+                Connexion InscWin = new Connexion(FXApp.this);
                 try {
-                    ConnWin.start(stage);
+                    InscWin.start(stage);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                
+                                
+                //  https://github.com/marcojakob/javafx-ui-sandbox
+                /*GridPane grid = new GridPane();
+                grid.setHgap(10);
+                grid.setVgap(10);
+                grid.setPadding(new Insets(0, 10, 0, 10));
+                final TextField username = new TextField(); 
+                username.setPromptText("Username");
+                final PasswordField password = new PasswordField(); 
+                password.setPromptText("Password");
+
+                grid.add(new Label("Username:"), 0, 0);
+                grid.add(username, 1, 0);
+                grid.add(new Label("Password:"), 0, 1);
+                grid.add(password, 1, 1);
+
+                String usernameResult;
+                String passwordResult;
+
+                Callback myCallback = new Callback() {
+                  @Override
+                  public Void call(Void param) {
+                    usernameResult = username.getText();
+                    passwordResult = password.getText();
+                    return null;
+                  }
+                };
+
+                DialogResponse resp = Dialogs.showCustomDialog(stage, grid, "Please log in", "Login", DialogOptions.OK_CANCEL, myCallback);
+                System.out.println("Custom Dialog: User clicked: " + resp);
+                //You must check the resp, since input fields' texts are returned regardless of what button was pressed. (ie. If user clicked 'Cancel' disregard the input) 
+                System.out.println("Custom Dialog: Fields set from custom dialog: " + usernameResult + "/" + passwordResult);
+                */
             }
         });
 
@@ -279,6 +318,10 @@ public class FXApp extends Application {
                     + "-fx-background-radius: 9,8;");
             leftBox.getChildren().add(chkBoite);
         }
+    }
+    
+    public void setUser(User u) {
+        this.currentUser = u;
     }
     
 

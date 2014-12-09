@@ -158,29 +158,23 @@ public class BDD {
     }
 
     
-    public boolean checkEmailMdp(String email, String mdp) {
-        ArrayList<String> userSelectedEmail = new ArrayList<>();
+    public User getUserByEmail(String email) throws SQLException {
         PreparedStatement requete;
+        ResultSet rs = null;
         
         try {
             requete = (PreparedStatement) connexion.prepareStatement(
-                    "SELECT password FROM user WHERE email=?");
+                    "SELECT DISTINCT * FROM user WHERE email=?");
             requete.setString(1, email);
             requete.executeQuery();
-            ResultSet rs = requete.getResultSet();
-            while(rs.next()) {
-                userSelectedEmail.add(rs.getString(1));
-            }
-            rs.close();
-        } catch(SQLException e) {
-            System.err.println("SQL EXCEPTION !!!!!!!!!!!!!!! "
-                    + "ON A PAS PU CHECKER TON MDP  -___-" + e.getMessage());
+            rs = requete.getResultSet();
+            rs.next();
+            return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
         }
-        for(String mdpI : userSelectedEmail) {
-            if(mdpI.equals(mdp))
-                return true;
+        finally {
+            if(rs != null)
+                rs.close();
         }
-        return false;
     }
 
 
@@ -194,7 +188,7 @@ public class BDD {
         } catch (ClassNotFoundException e) {
         }
         try {
-            connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/javanews", "root", "azert");
+            connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/javanews", "root", "toor");
         } catch (SQLException e) {
             e.printStackTrace();
         }
