@@ -174,6 +174,49 @@ public class BDD {
             }
         }
     }
+    
+    public boolean userHasFavorite(User user, Article art) throws SQLException {
+        if(user == null) return false;
+        PreparedStatement requete;
+        ResultSet rs = null;
+
+        try {
+            requete = (PreparedStatement) connexion.prepareStatement(
+                    "SELECT * FROM likearticle WHERE id_user=? AND id_article=?");
+            System.out.println(user + "lool"+art);
+            requete.setString(1, "" + user.getId());
+            requete.setString(2, "" + art.getId());
+            requete.executeQuery();
+            rs = requete.getResultSet();
+            return rs.first();      // Retourne false si le résultSet est vide
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+        }
+    }
+    
+    public int userSetFavorite(User user, Article art) {
+        int id = -1;
+        PreparedStatement req;
+
+        try {
+            req = (PreparedStatement) connexion.prepareStatement(
+                    "INSERT INTO likearticle VALUES (null, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            req.setInt(1, user.getId());
+            req.setInt(2, art.getId());
+            req.executeUpdate();
+            ResultSet rs = req.getGeneratedKeys();
+            rs.next();
+            id = rs.getInt(1);
+            req.close();
+        } catch (SQLException e) {
+            System.err.println("SetFavoris A FOIRE !!!! " + e.getMessage());
+        }
+
+        return id;
+    }
 
 
     /*

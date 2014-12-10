@@ -4,6 +4,7 @@ import java.sql.Date;
 
 public class Article {
 
+    private int    id = 0;
     private String titre = null;
     private String description = null;
     private String link = null;
@@ -37,6 +38,14 @@ public class Article {
 
     /* ************ Getters and Setters **************
      ************************************************* */
+    public int getId() {
+        return id;
+    }
+      
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public int getRssId() {
         return rssId;
     }

@@ -25,6 +25,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -169,7 +170,7 @@ public class FXApp extends Application {
     private void addAllArticles(VBox articleBox, Scene scene) {
         articleBox.getChildren().clear();
         // Pour chaque article de la liste de don�nes
-        for(Article artI : articleList) {
+        for(final Article artI : articleList) {
             // Cr�e l'image de gauche
         	String url_img = artI.getUrlImage() ;
         	if(url_img == null)
@@ -182,17 +183,35 @@ public class FXApp extends Application {
             image.setFitHeight(100);
 
             // Cr�e l'�toile des favoris
-            ImageView favoris = new ImageView(Langage.RESSOURCE_PATH + "images/favorisOFF.png");
+            final ImageView favoris = new ImageView();
             favoris.setPreserveRatio(true);
             favoris.setFitWidth(15);
-            VBox vbFavoris = new VBox(favoris);
+            addMouseEnter_ExitEvents(scene, favoris);
+            try {
+                if(conn.userHasFavorite(currentUser, artI))
+                    favoris.setImage(new Image(Langage.RESSOURCE_PATH + "images/favorisON.png"));
+                else
+                    favoris.setImage(new Image(Langage.RESSOURCE_PATH + "images/favorisOFF.png"));
+            } catch (SQLException e) {
+                System.err.println("FUCK :'( " + e.getMessage());
+            }
             favoris.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 // FAVORIS cliqué
                     @Override
                     public void handle(MouseEvent event) {
-                        //if(currentUser != null) {
-                            // Teste si le favoris
-                        //}
+                        if(currentUser != null) {
+                            // Teste si l'utilisateur a déjà le favoris
+                            try {
+                                if( !conn.userHasFavorite(currentUser, artI) ) {
+                                     conn.userSetFavorite(currentUser, artI);
+                                     favoris.setImage(
+                                        new Image(Langage.RESSOURCE_PATH + "images/favorisON.png"));
+                                }
+                            } catch (SQLException e) {
+                                System.err.println("SQL Exception -___- Err pdt test si déjà en Favoris"
+                                        +e.getMessage());
+                            }
+                        }
                             
                     }
                 });
@@ -222,7 +241,7 @@ public class FXApp extends Application {
                 });
 
             // cr�e l'article en assemblant les composants
-            HBox articleNode = new HBox(image, vbFavoris, vbDetails);
+            HBox articleNode = new HBox(image, favoris, vbDetails);
             articleNode.setPadding(new Insets(5, 15, 5, 15));
             articleNode.setSpacing(18);
             articleNode.setId("articleNode");
@@ -297,7 +316,7 @@ public class FXApp extends Application {
             ImageView logo = new ImageView(Langage.RESSOURCE_PATH + flux.getChemin());
             logo.setPreserveRatio(true);
             logo.setFitHeight(30);
-            
+
             HBox rssBox = new HBox(chkBoite, logo);
             rssBox.setPadding(new Insets(10, 0, 10, 10));
             rssBox.setSpacing(15);
