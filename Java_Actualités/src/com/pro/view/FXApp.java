@@ -8,6 +8,7 @@ import com.pro.model.User;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -15,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -39,7 +41,7 @@ import javafx.stage.WindowEvent;
 public class FXApp extends Application {
     private List<Article> allArticleList;
     private List<Article> articleList;
-    //private final HashMap<Integer, String> couleurDuFlux;
+    private HashMap<Integer, ImageView> listFavoris;
     private final BDD conn;
     private User currentUser = null;
 	 
@@ -48,6 +50,7 @@ public class FXApp extends Application {
         Langage.chargerFichierLangue("build/classes/com/pro/ressources/en.lang");
 
         conn = new BDD();
+        listFavoris = new HashMap<>();
         System.out.println("Constructeur de FXApp");
     }
 
@@ -68,17 +71,62 @@ public class FXApp extends Application {
         HBox topRightBox = new HBox();
         topRightBox.setId("topRightBox");
         topRightBox.setPadding(new Insets(15, 12, 15, 12));
-        topRightBox.setSpacing(20);
+        topRightBox.setSpacing(15);
         topRightBox.setAlignment(Pos.CENTER_RIGHT);
 
+        // Champs de connection
+        final Label lblUserName = new Label();      // Déclaré final pour y avoir accès dans handler
+        TextField champEmail = new TextField("e-mail");
+        champEmail.setPrefWidth(150);
+        PasswordField champMdp = new PasswordField();
+        champMdp.setText("mdppppp");
+        champMdp.setPrefWidth(150);
+        final Label lblConnection = new Label();    // Déclaré final pour y avoir accès dans handler
+        
         // Bouton connexion
-        Button connexion = new Button(Langage.CONNEXION);
+        final Button connexion = new Button(Langage.CONNEXION);
         connexion.setId("TopButtons");
         connexion.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Je veux me connecter !!!!!");
+                try {
+                    currentUser = conn.getUserByEmail(champEmail.getText());
+                } catch (SQLException e) {
+                    System.err.println("Pb de r�cup de l'utilisateur en BDD -____-\n"+
+                          e.getMessage());
+                }
+
+                // Si la BD a trouv� une correpondance de email/mdp
+                if(!champEmail.getText().equals("") && 
+                        !champMdp.getText().equals("") &&
+                        currentUser != null &&
+                        currentUser.getPassword().equals(champMdp.getText()) ) {
+                    // CONNEXION OK
+                    lblUserName.setText(Langage.BIENVENUE + currentUser.getNom());
+                    lblUserName.setStyle("-fx-font-size: 11pt;");
+                    lblConnection.setText("");
+                    connexion.setDisable(true);
+                    
+                    // SetFavoris
+                    try {
+                        ImageView img;
+                        for(Article article : articleList) {
+                            if(conn.userHasFavorite(currentUser, article)) {    // Si l'article est en favoris
+                                img = FXApp.this.listFavoris.get(article.getId());
+                                img.setImage(new Image(Langage.RESSOURCE_PATH + "images/favorisON.png"));
+                                FXApp.this.listFavoris.replace(article.getId(), img);
+                            }
+                        }
+                    } catch (SQLException e) {
+                        System.err.println("SQL Exception -_____- UserHasFavorites" + e.getMessage());
+                    }
+                }
+                else {
+                    lblConnection.setStyle("-fx-text-fill: RED;");
+                    lblConnection.setText(Langage.ERR_CONNECTION);
+                }
             }
         });
 
@@ -101,7 +149,7 @@ public class FXApp extends Application {
             }
         });
 
-        topRightBox.getChildren().addAll(connexion, newAccount);
+        topRightBox.getChildren().addAll(lblUserName, champEmail, champMdp, connexion, lblConnection, newAccount);
         topStack.getChildren().addAll(topRightBox, logo);
 
         //   =========   Va chercher la liste des articles en BD et l'affiche au centre   =========
@@ -184,6 +232,7 @@ public class FXApp extends Application {
 
             // Cr�e l'�toile des favoris
             final ImageView favoris = new ImageView();
+            listFavoris.put(artI.getId(), favoris);
             favoris.setPreserveRatio(true);
             favoris.setFitWidth(15);
             addMouseEnter_ExitEvents(scene, favoris);
@@ -236,7 +285,15 @@ public class FXApp extends Application {
 
                     @Override
                     public void handle(MouseEvent event) {
-                        //YOUNES
+                        try {
+                        	artI.setExtraire_article(conn.bodyArticle(artI.getLink()));
+        					
+                        	Stage stage = new Stage();
+                            BodyArt BodyWin = new BodyArt(artI);
+                        	 BodyWin.start(stage);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
 

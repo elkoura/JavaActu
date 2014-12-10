@@ -87,25 +87,27 @@ public class BDD {
     public ArrayList<Article> articleList() throws SQLException {
         ArrayList<Article> listArticles = new ArrayList<>();
 
-        String sql = "SELECT titre,description,link,pubdate,source,url_img, rss_id FROM Articles ORDER BY id DESC LIMIT 10";
+        String sql = "SELECT id, titre,description,link,pubdate,source,url_img, rss_id FROM Articles ORDER BY id DESC";
 
         final Statement laRequete = connexion.createStatement();
         ResultSet leResultat = laRequete.executeQuery(sql);
 
         while (leResultat.next()) {
 
-            final String titre = leResultat.getString(1);
-            final String description = leResultat.getString(2);
-            final String link = leResultat.getString(3);
-            final String pubdate = leResultat.getString(4);
-            final String source = leResultat.getString(5);
-            final String url_img = leResultat.getString(6);
-            final int rssid = leResultat.getInt(7);
+            final int    id = leResultat.getInt(1);
+            final String titre = leResultat.getString(2);
+            final String description = leResultat.getString(3);
+            final String link = leResultat.getString(4);
+            final String pubdate = leResultat.getString(5);
+            final String source = leResultat.getString(6);
+            final String url_img = leResultat.getString(7);
+            final int rssid = leResultat.getInt(8);
             Article art = new Article();
+            art.setId(id);
             art.setTitre(titre);
             art.setDescription(description);
             art.setLink(link);
-            //art.setPubdate(stringDateToSqlDate(pubdate));
+            art.setPubdate(stringDateToSqlDate(pubdate));
             art.setSource(source);
             art.setUrlImage(url_img);
             art.setRssId(rssid);
@@ -159,6 +161,7 @@ public class BDD {
     public User getUserByEmail(String email) throws SQLException {
         PreparedStatement requete;
         ResultSet rs = null;
+        if(email == null) return null;
 
         try {
             requete = (PreparedStatement) connexion.prepareStatement(
@@ -183,7 +186,6 @@ public class BDD {
         try {
             requete = (PreparedStatement) connexion.prepareStatement(
                     "SELECT * FROM likearticle WHERE id_user=? AND id_article=?");
-            System.out.println(user + "lool"+art);
             requete.setString(1, "" + user.getId());
             requete.setString(2, "" + art.getId());
             requete.executeQuery();
@@ -204,8 +206,8 @@ public class BDD {
             req = (PreparedStatement) connexion.prepareStatement(
                     "INSERT INTO likearticle VALUES (null, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
-            req.setInt(1, user.getId());
-            req.setInt(2, art.getId());
+            req.setInt(1, art.getId());
+            req.setInt(2, user.getId());
             req.executeUpdate();
             ResultSet rs = req.getGeneratedKeys();
             rs.next();
@@ -217,6 +219,61 @@ public class BDD {
 
         return id;
     }
+
+    public void userUnSetFavorite(User user, Article art) {
+        PreparedStatement req;
+
+        try {
+            req = (PreparedStatement) connexion.prepareStatement(
+                    "DELETE FROM likearticle WHERE id_article=? AND id_user=?",
+                    Statement.RETURN_GENERATED_KEYS);
+            req.setInt(1, art.getId());
+            req.setInt(2, user.getId());
+            req.executeQuery();
+            req.close();
+        } catch (SQLException e) {
+            System.err.println("UnSetFavoris A FOIRE !!!! " + e.getMessage());
+        }
+    }
+
+    
+    public boolean articleExisteByTitre(String titre) throws SQLException {
+        PreparedStatement requete;
+        ResultSet rs = null;
+
+        try {
+            requete = (PreparedStatement) connexion.prepareStatement(
+                    "SELECT * FROM articles WHERE titre=?");
+            requete.setString(1, titre);
+            requete.executeQuery();
+            rs = requete.getResultSet();
+            return rs.first();      // Retourne false si le résultSet est vide
+        }
+        finally {
+            if (rs != null) {
+                rs.close();
+            }
+        }
+    }
+    
+        public String bodyArticle(String _link) throws SQLException {
+     String body = null;
+
+        String sql = "SELECT extraire_article FROM Articles WHERE link='"+_link+"'";
+
+        final Statement laRequete = connexion.createStatement();
+        ResultSet leResultat = laRequete.executeQuery(sql);
+
+        while (leResultat.next()) {
+         body = leResultat.getString(1);
+        }
+        laRequete.close();
+
+        return body;
+    }
+
+
+
 
 
     /*
@@ -241,13 +298,14 @@ public class BDD {
 
     public java.sql.Date stringDateToSqlDate(String SDate) {
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         java.util.Date d = null;
 
         try {
             d = formatter.parse(SDate);
         } catch (ParseException e) {
             e.printStackTrace();
+            return null;
         }
         java.sql.Date d2 = new Date(d.getTime());
         return (d2);

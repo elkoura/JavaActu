@@ -17,6 +17,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import com.pro.model.*;
+import java.util.ArrayList;
 
 /**
  * Parser les flux RSS
@@ -35,9 +36,6 @@ public class RssFeed {
             throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
 
         BDD conn = new BDD();
-        rss.setNom(_nom);
-        rss.setUrl(_url);
-        rss.setId(conn.getIdRss(rss.getUrl()));
 
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
@@ -63,9 +61,7 @@ public class RssFeed {
              */
             nodes = doc.getElementsByTagName("item");
             int l = 0;
-            for (int i = 0; i < nodes.getLength(); i++) {
-                //if(i==2 )break;
-
+            for (int i = 0; i < nodes.getLength() && i<5; i++) {
                 element = nodes.item(i);
 
                 /*
@@ -85,6 +81,11 @@ public class RssFeed {
                  * construire les champs de l'aticle
                  */
                 article.setTitre(this.readNode(element, "title"));
+                
+                /* Si l'article es déjà en base de données */
+                if(conn.articleExisteByTitre(article.getTitre())) {
+                    continue;
+                }
                 article.setDescription(this.readNode(element, "description").trim());
                 article.setLink(this.readNode(element, "link"));
                 article.setPubdate(stringDateToSqlDate(pubDateString));
@@ -153,9 +154,9 @@ public class RssFeed {
             throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
 
         BDD conn = new BDD();
-        rss.setNom(_nom);
+        /*rss.setNom(_nom);
         rss.setUrl(_url);
-        rss.setId(conn.getIdRss(rss.getUrl()));
+        rss.setId(conn.getIdRss(rss.getUrl()));*/
 
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
@@ -182,7 +183,7 @@ public class RssFeed {
             nodes = doc.getElementsByTagName("item");
             int l = 0;
             String desc = null;
-            for (int i = 0; i < nodes.getLength(); i++) {
+            for (int i = 0; i < nodes.getLength() && i<5; i++) {
                 element = nodes.item(i);
 
                 System.out.println("Titre: " + readNode(element, "title"));
@@ -199,6 +200,11 @@ public class RssFeed {
                         + desc);
 
                 article.setTitre(this.readNode(element, "title")); //set******
+
+                /* Si l'article es déjà en base de données */
+                if(conn.articleExisteByTitre(article.getTitre())) {
+                    continue;
+                }
                 article.setLink(this.readNode(element, "link")); //set******
                 article.setDescription(desc); // set*****
 
@@ -555,11 +561,27 @@ public class RssFeed {
 //			 System.out.println(artI.getTitre());
 //		 }
 //	}
-    public static void main(String[] args) throws ClassNotFoundException,
-            SQLException, InstantiationException, IllegalAccessException {
+    
+    public void startParsing() {
+        BDD conn = new BDD();
+        try {
+            ArrayList<FluxRSS> listFlux = conn.rssList();
+            // Pour chaque flux, récupère les premières actualités
+            for(FluxRSS f : listFlux) {
+                rss = f;
+                if(f.getId() == 0 || f.getId() == 2)      // Le Monde
+                    parseRss2("...", "...");
+                else
+                    parseRss("...", "...");
+            }
+        } catch (ClassNotFoundException |SQLException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void main(String[] args)  {
 
         RssFeed r = new RssFeed();
-        r.parseRss2("Le devoir", "http://fr.canoe.ca/rss/feed/nouvelles/sports.xml");
+        r.startParsing();
     }
 
 }

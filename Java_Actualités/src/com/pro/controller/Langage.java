@@ -24,6 +24,7 @@ public class Langage {
     public static String ERR_CHAMP_VIDE;
     public static String ERR_CONNECTION;
     public static String CONNECTE;
+    public static String BIENVENUE;
     public static String ABIENTOT;
     
     public Langage() {
@@ -52,7 +53,8 @@ public class Langage {
             if((ERR_CHAMP_VIDE = br.readLine()) == null)    throw new RuntimeException("BAD TONGUE FILE");
             if((ERR_CONNECTION = br.readLine()) == null)    throw new RuntimeException("BAD TONGUE FILE");
             if((CONNECTE = br.readLine()) == null)          throw new RuntimeException("BAD TONGUE FILE");
-            ABIENTOT = br.readLine();               // P as de vérif. OSEF si il y a qqch après !!
+            if((BIENVENUE = br.readLine()) == null)          throw new RuntimeException("BAD TONGUE FILE");
+            ABIENTOT = br.readLine();               // P as de vï¿½rif. OSEF si il y a qqch aprï¿½s !!
 
             br.close();
         }		

@@ -67,4 +67,10 @@ public class FluxRSS {
     public void setChemin(String chemin) {
         this.chemin = chemin;
     }
+    
+    /*************************************/
+    @Override
+    public String toString() {
+        return ("id="+id+" Nom="+nom+" URL="+url+" Color="+color+" Chemin="+chemin);
+    }
 }

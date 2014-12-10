@@ -23,8 +23,8 @@ public class Article {
     }
 
     public Article() {      // Constructeur Bidon de d�bug
-        this("TITRE TEST blabla", "DESCRIPTION blablablablablablablablablablablabla",
-                "http://TESTLINK.mdr", new Date(new Long("1417561746190")), "http://URLIMAGE.img", 123);
+        this("NOT SET !!!!!", "NOT SET !!!!!",
+                "NOT SET !!!!!", new Date(new Long("0")), "NOT SET !!!!!", 123);
     }
 
     public Article(String titre, String description, String link, Date pubdate, String urlImage, int rssId) {
