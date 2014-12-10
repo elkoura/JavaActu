@@ -52,3 +52,8 @@
     -fx-font-style: italic;
     -fx-text-fill: #989696;
 }
+
+#CheckBoiteFlux {
+    -fx-font-size: 11pt;
+    -fx-text-fill: WHITE;
+}

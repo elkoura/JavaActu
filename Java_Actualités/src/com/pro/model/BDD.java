@@ -22,7 +22,7 @@ public class BDD {
         loadDatabase();
     }
     /*
-     * inserer un article dans la base de données
+     * inserer un article dans la base de donnï¿½es
      */
 
     public void addArticle(Article art) throws ClassNotFoundException,
@@ -43,13 +43,13 @@ public class BDD {
     }
 
     /*
-     *  inserer un flux rss dans la base de données et returner son id 
+     *  inserer un flux rss dans la base de donnï¿½es et returner son id 
      */
     public int addRss(FluxRSS flux) throws ClassNotFoundException, SQLException,
             InstantiationException, IllegalAccessException {
         int id = 0;
         PreparedStatement req = (PreparedStatement) connexion.prepareStatement(
-                "INSERT INTO rssurl VALUES (NULL, ?, ?)",
+                "INSERT INTO rssurl VALUES (NULL, ?, ?, NULL, NULL)",
                 Statement.RETURN_GENERATED_KEYS);
         req.setString(1, flux.getNom());
         req.setString(2, flux.getUrl());
@@ -85,7 +85,7 @@ public class BDD {
         return id;
     }
 
-    /* récupère les 10 derniers articles de chaque flux dans la BDD */
+    /* rï¿½cupï¿½re les 10 derniers articles de chaque flux dans la BDD */
     public ArrayList<Article> articleList() throws SQLException {
         ArrayList<Article> listArticles = new ArrayList<>();
 
@@ -118,11 +118,11 @@ public class BDD {
         return listArticles;
     }
 
-    /* Récupère tous les flux de la BDD */
+    /* Rï¿½cupï¿½re tous les flux de la BDD */
     public ArrayList<FluxRSS> rssList() throws SQLException {
 
         ArrayList<FluxRSS> listRss = new ArrayList<>();
-        String sql = "SELECT id, nom, url, couleur FROM rssurl";
+        String sql = "SELECT id, nom, url, couleur, chemin FROM rssurl";
         final Statement laRequete = connexion.createStatement();
         ResultSet leResultat = laRequete.executeQuery(sql);
 
@@ -132,6 +132,7 @@ public class BDD {
             flux.setNom(leResultat.getString(2));
             flux.setUrl(leResultat.getString(3));
             flux.setColor(leResultat.getString(4));
+            flux.setChemin(leResultat.getString(5));
             listRss.add(flux);
         }
         laRequete.close();
@@ -140,7 +141,7 @@ public class BDD {
     }
     
     
-    /* Récupère la couleur d'un flux à partir de son ID */
+    /* Rï¿½cupï¿½re la couleur d'un flux ï¿½ partir de son ID */
     public String getRssColor(int id) {
         List<FluxRSS> listRss = null;
         
@@ -179,7 +180,7 @@ public class BDD {
 
 
     /*
-     * se connecter à la base de données 
+     * se connecter ï¿½ la base de donnï¿½es 
      */
     private void loadDatabase() {
         // Chargement du driver
@@ -188,7 +189,7 @@ public class BDD {
         } catch (ClassNotFoundException e) {
         }
         try {
-            connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/javanews", "root", "toor");
+            connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/javanews", "root", "azert");
         } catch (SQLException e) {
             e.printStackTrace();
         }

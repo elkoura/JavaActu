@@ -2,10 +2,11 @@ package com.pro.model;
 
 public class FluxRSS {
 
-    private int id;
+    private int    id;
     private String nom;
     private String url;
     private String color;
+    private String chemin;
 
     
     /* ************ Constructeurs *************
@@ -17,7 +18,7 @@ public class FluxRSS {
     public FluxRSS(int x) {
         this("toto", "rand=" + new java.util.Random().toString(), x);
     }
-    /* Constructeurs de débug !!!!  */
+    /* Constructeurs de dï¿½bug !!!!  */
 
     public FluxRSS(String nom, String url, int id) {
         this.id = id;
@@ -57,5 +58,13 @@ public class FluxRSS {
 
     public void setColor(String color) {
         this.color = color;
+    }
+    
+    public String getChemin() {
+        return chemin;
+    }
+    
+    public void setChemin(String chemin) {
+        this.chemin = chemin;
     }
 }

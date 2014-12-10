@@ -79,7 +79,7 @@ public class RssFeed {
                         + pubDateString.substring(9, 13);
 
                 /*
-                 *	extraire l'image à l'aide de "enclosure 
+                 *	extraire l'image ï¿½ l'aide de "enclosure 
                  * 
                  */
                 /* 
@@ -103,7 +103,7 @@ public class RssFeed {
                         .replaceAll("<p>", " ").replaceAll("</p>", " ").trim());
 
 
-                /* ******** découper l'url et extraire que la premier partie 
+                /* ******** dï¿½couper l'url et extraire que la premier partie 
                  *   pour la source
                  * ex : http:\\lefigaro.fr
                  */
@@ -150,113 +150,113 @@ public class RssFeed {
         return null;
     }
 
-    public String parseRss2(String _nom, String _url)
-            throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+public String parseRss2(String _nom, String _url)
+			throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
 
-        BDD conn = new BDD();
-        rss.setNom(_nom);
-        rss.setUrl(_url);
-        rss.setId(conn.addRss(rss));
+		BDD conn = new BDD();
+		rss.setNom(_nom);
+		rss.setUrl(_url);
+		rss.setId(conn.addRss(rss));
 
-        try {
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-                    .newDocumentBuilder();
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
 
-            URL url = new URL(rss.getUrl());
-            Document doc = builder.parse(url.openStream());
-            NodeList nodes = null;
-            Node element = null;
+			URL url = new URL(rss.getUrl());
+			Document doc = builder.parse(url.openStream());
+			NodeList nodes = null;
+			Node element = null;
 
-            /**
-             * Titre du flux
-             */
-            nodes = doc.getElementsByTagName("channel");
-            Node node = doc.getDocumentElement();
-            System.out.println("Flux RSS: "
-                    + this.readNode(node, "channel|title"));
-            System.out.println();
-            /**
-             * Elements du flux RSS
-			 *
-             */
+			/**
+			 * Titre du flux
+			 */
+			 nodes = doc.getElementsByTagName("channel");
+			 Node node = doc.getDocumentElement();
+			 System.out.println("Flux RSS: "
+					 + this.readNode(node, "channel|title"));
+			 System.out.println();
+			 /**
+			  * Elements du flux RSS
+			  *
+			  */
 
-            nodes = doc.getElementsByTagName("item");
-            int l = 0;
-            for (int i = 0; i < nodes.getLength(); i++) {
-                element = nodes.item(i);
+			 nodes = doc.getElementsByTagName("item");
+			 int l = 0;
+			 String desc= null;
+			 for (int i = 0; i < nodes.getLength(); i++) {
+				 element = nodes.item(i);
 
-                System.out.println("Titre: " + readNode(element, "title"));
-                article.setTitre(this.readNode(element, "title"));
+				 
+				 System.out.println("Titre: " + readNode(element, "title"));
+				 
 
-                System.out.println("Lien: " + readNode(element, "link"));
-                article.setLink(this.readNode(element, "link"));
+				 System.out.println("Lien: " + readNode(element, "link"));
+				
+				 
+				 desc = readNode(element, "description")
+				 .substring(
+						 0,
+						 readNode(element, "description")
+						 .indexOf("<img"))
+						 .replaceAll("<p>", "").replaceAll("</p>", " ").replaceAll(" (Agence QMI) <br />", " ");
+				 System.out.println("Description: "
+						 + desc);
+				 
+				 article.setTitre(this.readNode(element, "title")); //set******
+				 article.setLink(this.readNode(element, "link")); //set******
+				 article.setDescription(desc); // set*****
+				 
+				 String s = readNode(element, "link");
+				 int j = 0;
+				 int compte = 0;
 
-                System.out.println("Description: "
-                        + readNode(element, "description")
-                        .substring(
-                                0,
-                                readNode(element, "description")
-                                .indexOf("<img"))
-                        .replaceAll("<p>", "").replaceAll("</p>", " ").replaceAll(" (Agence QMI) <br />", " "));
-                article.setDescription(this
-                        .readNode(element, "description")
-                        .substring(
-                                0,
-                                readNode(element, "description")
-                                .indexOf("<img")).replaceAll("<p>", "")
-                        .replaceAll("</p>", " "));
-                String s = readNode(element, "link");
-                int j = 0;
-                int compte = 0;
+				 while (compte < 3) {
+					 if (s.charAt(j) == '/') {
+						 compte = compte + 1;
+					 }
+					 j = j + 1;
+				 }
 
-                while (compte < 3) {
-                    if (s.charAt(j) == '/') {
-                        compte = compte + 1;
-                    }
-                    j = j + 1;
-                }
+				 System.out.println("Source: " + s.substring(0, j - 1));
+				 
+				 System.out.println("Date de publication: "+ readNode(element, "pubDate"));
+				 String pubDateString = readNode(element, "pubDate");
+				 pubDateString = pubDateString.replaceAll(" ", "");
+				 pubDateString = pubDateString.substring(4, 6) + "-"
+						 + pubDateString.substring(6, 9) + "-"
+						 + pubDateString.substring(9, 13);
+				 System.out.println(pubDateString);
+				 System.out.println("LE CORPS :  " + extractLink(article.getLink()));
+				 System.out.println("---URL IMAGE : " + article.getUrlImage());
+				 System.out.println("-----------------------------------");
 
-                System.out.println("Source: " + s.substring(0, j - 1));
-                System.out.println("Date de publication: "
-                        + readNode(element, "pubDate"));
-                String pubDateString = readNode(element, "pubDate");
-                pubDateString = pubDateString.replaceAll(" ", "");
-                pubDateString = pubDateString.substring(4, 6) + "-"
-                        + pubDateString.substring(6, 9) + "-"
-                        + pubDateString.substring(9, 13);
-                System.out.println(pubDateString);
-                System.out.println("LE CORPS :  " + extractLink(article.getLink()));
-                System.out.println("---URL IMAGE : " + article.getUrlImage());
-                System.out.println("-----------------------------------");
 
-                article.setTitre(this.readNode(element, "title"));
-                article.setDescription(this.readNode(element, "description").trim());
-                article.setLink(this.readNode(element, "link"));
-                article.setPubdate(stringDateToSqlDate(pubDateString));
-                //article.setExtraire_article(extractLink(article.getLink()));
-                article.setExtraire_article("corps vide pour le moment");
-                article.setSource(rss.getNom());
-                article.setUrlImage(extractUrlImage(article.getLink()));
+				 article.setPubdate(stringDateToSqlDate(pubDateString));
+				 //article.setExtraire_article(extractLink(article.getLink()));
+				 article.setExtraire_article("corps vide pour le moment");
+				 article.setSource(rss.getNom());
+				 article.setUrlImage(extractUrlImage(article.getLink()));
 
-                article.setRssId(rss.getId());
+				 article.setRssId(rss.getId());
 
-                conn.addArticle(article);
+				 conn.addArticle(article);
 
-                l = l + 1;
-            }
+				 l = l + 1;
+			 }
 
-            // out . close ();
-        } catch (SAXException ex) {
-            System.out.println("erreur SAXException");
-        } catch (IOException ex) {
-            System.out.println("erreur IOException");
-        } catch (ParserConfigurationException ex) {
-            System.out.println("erreur ParserConfigurationException");
-        } finally {
-            conn.close();
-        }
-        return null;
-    }
+			 // out . close ();
+		} catch (SAXException ex) {
+			System.out.println("erreur SAXException");
+		} catch (IOException ex) {
+			System.out.println("erreur IOException");
+		} catch (ParserConfigurationException ex) {
+			System.out.println("erreur ParserConfigurationException");
+		} finally {
+			conn.close();
+		}
+		return null;
+	}
+
 
     public String readNode(Node _node, String _path) {
 
@@ -329,7 +329,7 @@ public class RssFeed {
         ele = document.select("div .ctn").first(); // le 360
         ele1 = document.select("div .texte-global clearfix").first();
         ele2 = document.select("div .texte-global").first();
-        ele3 = document.select("div .articleBody").first(); // l'équipe
+        ele3 = document.select("div .articleBody").first(); // l'ï¿½quipe
         ele4 = document.select("div .article_content").first();
         ele5 = document.select("div .mna-body").first();
         ele6 = document.select("div .fig-article-body").first(); // le figaro

@@ -43,7 +43,7 @@ public class FXApp extends Application {
     private User currentUser = null;
 	 
     public FXApp() {
-        // complète les champs statics de la classe Langue
+        // complï¿½te les champs statics de la classe Langue
         Langage.chargerFichierLangue("build/classes/com/pro/ressources/en.lang");
 
         conn = new BDD();
@@ -58,12 +58,12 @@ public class FXApp extends Application {
         topStack.setAlignment(Pos.CENTER_LEFT);
         //topStack.setPadding(new Insets(15, 12, 15, 12));
 
-        // Logo à gauche
+        // Logo ï¿½ gauche
         ImageView logo = new ImageView(Langage.RESSOURCE_PATH + "images/Logo.png");
         logo.setPreserveRatio(true);
         logo.setFitWidth(150);
 
-        // Box des boutons à droite
+        // Box des boutons ï¿½ droite
         HBox topRightBox = new HBox();
         topRightBox.setId("topRightBox");
         topRightBox.setPadding(new Insets(15, 12, 15, 12));
@@ -78,58 +78,17 @@ public class FXApp extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Je veux me connecter !!!!!");
-                Stage stage = new Stage();
-                Connexion InscWin = new Connexion(FXApp.this);
-                try {
-                    InscWin.start(stage);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                
-                                
-                //  https://github.com/marcojakob/javafx-ui-sandbox
-                /*GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(0, 10, 0, 10));
-                final TextField username = new TextField(); 
-                username.setPromptText("Username");
-                final PasswordField password = new PasswordField(); 
-                password.setPromptText("Password");
-
-                grid.add(new Label("Username:"), 0, 0);
-                grid.add(username, 1, 0);
-                grid.add(new Label("Password:"), 0, 1);
-                grid.add(password, 1, 1);
-
-                String usernameResult;
-                String passwordResult;
-
-                Callback myCallback = new Callback() {
-                  @Override
-                  public Void call(Void param) {
-                    usernameResult = username.getText();
-                    passwordResult = password.getText();
-                    return null;
-                  }
-                };
-
-                DialogResponse resp = Dialogs.showCustomDialog(stage, grid, "Please log in", "Login", DialogOptions.OK_CANCEL, myCallback);
-                System.out.println("Custom Dialog: User clicked: " + resp);
-                //You must check the resp, since input fields' texts are returned regardless of what button was pressed. (ie. If user clicked 'Cancel' disregard the input) 
-                System.out.println("Custom Dialog: Fields set from custom dialog: " + usernameResult + "/" + passwordResult);
-                */
             }
         });
 
-        // Bouton Créer un compte
+        // Bouton Crï¿½er un compte
         Button newAccount = new Button(Langage.CREER_COMPTE);
         newAccount.setId("TopButtons");
         newAccount.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Je veux créer un compte !!!!!");
+                System.out.println("Je veux crï¿½er un compte !!!!!");
 
                 Stage stage = new Stage();
                 Inscription InscWin = new Inscription();
@@ -141,7 +100,7 @@ public class FXApp extends Application {
             }
         });
 
-        topRightBox.getChildren().addAll(newAccount, connexion);
+        topRightBox.getChildren().addAll(connexion, newAccount);
         topStack.getChildren().addAll(topRightBox, logo);
 
         //   =========   Va chercher la liste des articles en BD et l'affiche au centre   =========
@@ -178,14 +137,14 @@ public class FXApp extends Application {
         root.setLeft(leftBox);
         root.setCenter(articlesView);
 
-        //    =========   Crée la fenêtre principale   =========
+        //    =========   Crï¿½e la fenï¿½tre principale   =========
         Scene scene = new Scene(root, 1200, 675);
         scene.getStylesheets().add(FXApp.class.getResource("Style.css").toExternalForm());
         addMouseEnter_ExitEvents(scene, connexion);
         addMouseEnter_ExitEvents(scene, newAccount);
         addMouseEnter_ExitEvents(scene, articlesView);
 
-        // Rempli les données de Flux et d'articles correspondants
+        // Rempli les donnï¿½es de Flux et d'articles correspondants
         addAllRSS(leftBox, articleBox, rssList, scene);
         addAllArticles(articleBox, scene);
 
@@ -203,48 +162,66 @@ public class FXApp extends Application {
     }
 
     /**
-     * Crée un encart d'article
+     * Crï¿½e un encart d'article
      * @param articleBox la boite contenant tous les articles
      * @param articleList la liste des objets articles (DONNEES)
      */
     private void addAllArticles(VBox articleBox, Scene scene) {
         articleBox.getChildren().clear();
-        // Pour chaque article de la liste de donénes
+        // Pour chaque article de la liste de donï¿½nes
         for(Article artI : articleList) {
-            // Crée l'image de gauche
+            // Crï¿½e l'image de gauche
         	String url_img = artI.getUrlImage() ;
         	if(url_img == null)
-        		url_img = "http://21virages.free.fr/blog/public/Caravane/2012/indisponible.jpg";
+        		url_img = Langage.RESSOURCE_PATH + "/images/indisponible.jpg";
         	javafx.scene.image.Image img = new javafx.scene.image.Image(url_img);
             ImageView image = new ImageView();
-            image.setImage( img);
+            image.setImage(img);
             image.setPreserveRatio(true);
             image.setFitWidth(120);
             image.setFitHeight(100);
 
-            // Crée l'étoile des favoris
+            // Crï¿½e l'ï¿½toile des favoris
             ImageView favoris = new ImageView(Langage.RESSOURCE_PATH + "images/favorisOFF.png");
             favoris.setPreserveRatio(true);
             favoris.setFitWidth(15);
             VBox vbFavoris = new VBox(favoris);
+            favoris.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                // FAVORIS cliquÃ©
+                    @Override
+                    public void handle(MouseEvent event) {
+                        //if(currentUser != null) {
+                            // Teste si le favoris
+                        //}
+                            
+                    }
+                });
             
             // Titre et description de l'article
             Label titre = new Label(artI.getTitre());
             titre.setId("TitreArticle");
             
-            Label date_source = new Label(artI.getSource());
+            Label date_source = new Label(artI.getSource() + ",     Le " + artI.getPubdate());
             date_source.setPadding(new Insets(0, 6, 2, 6));
-            date_source.setStyle("-fx-background-color: blue;");
             date_source.setStyle("-fx-background-color: "+ conn.getRssColor(artI.getRssId()) + ";"
-                    + "-fx-background-radius: 9,8;");
+                    + "-fx-background-radius: 9,8;"
+                    + "-fx-text-fill: WHITE;");
             date_source.setId("Date_source");
             
             Label description = new Label(artI.getDescription());
             description.setPrefWidth(700);
             description.setWrapText(true);
             VBox vbDetails = new VBox(titre, date_source, description);
+            addMouseEnter_ExitEvents(scene, vbDetails);
+            vbDetails.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
-            // crée l'article en assemblant les composants
+                    @Override
+                    public void handle(MouseEvent event) {
+                        //YOUNES
+                    }
+                });
+
+            // crï¿½e l'article en assemblant les composants
             HBox articleNode = new HBox(image, vbFavoris, vbDetails);
             articleNode.setPadding(new Insets(5, 15, 5, 15));
             articleNode.setSpacing(18);
@@ -256,7 +233,7 @@ public class FXApp extends Application {
                 }
             });
 
-            // Ajoute l'article et une barre de séparation à la boite
+            // Ajoute l'article et une barre de sï¿½paration ï¿½ la boite
             articleBox.getChildren().addAll(articleNode, new Separator(Orientation.HORIZONTAL));
         }
     }
@@ -281,15 +258,18 @@ public class FXApp extends Application {
 
     private void addAllRSS(VBox leftBox, VBox articleBox, ArrayList<FluxRSS> rssList, Scene scene) {
         for(FluxRSS flux : rssList) {
-            CheckBox chkBoite = new CheckBox(flux.getNom());
-            chkBoite.setPadding(new Insets(0, 20, 20, 10));
+            CheckBox chkBoite = new CheckBox();
+            chkBoite.setId("CheckBoiteFlux");
             chkBoite.setSelected(true);
+            chkBoite.setPadding(new Insets(0, 10, 0, 0));
+            chkBoite.setStyle("-fx-background-color: "+ flux.getColor() + ";"
+                    + "-fx-background-radius: 9,8;");
             chkBoite.setOnAction( new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     //System.out.println(chkBoite.getText() + chkBoite.isSelected());
                     if(chkBoite.isSelected()) {
-                        // Sélectionne les articles du flux et les affiche
+                        // Sï¿½lectionne les articles du flux et les affiche
                         for(Article art : allArticleList) {
                             if(art.getRssId() == flux.getId())
                                 articleList.add(art);
@@ -313,10 +293,16 @@ public class FXApp extends Application {
                 }
             });
 
-            chkBoite.setStyle("-fx-font-size: 11pt;"
-                    + "-fx-background-color: "+ flux.getColor() + ";"
-                    + "-fx-background-radius: 9,8;");
-            leftBox.getChildren().add(chkBoite);
+            // Image en dessous du nom du flux
+            ImageView logo = new ImageView(Langage.RESSOURCE_PATH + flux.getChemin());
+            logo.setPreserveRatio(true);
+            logo.setFitHeight(30);
+            
+            HBox rssBox = new HBox(chkBoite, logo);
+            rssBox.setPadding(new Insets(10, 0, 10, 10));
+            rssBox.setSpacing(15);
+            
+            leftBox.getChildren().add(rssBox);
         }
     }
     

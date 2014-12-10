@@ -7,21 +7,21 @@ public class Article {
     private String titre = null;
     private String description = null;
     private String link = null;
-    private Date pubdate = null;
+    private Date   pubdate = null;
     private String extraire_article = null;
     private String source = null;
     private String urlImage = null;
-    private int rssId = 0;
+    private int    rssId = 0;
 
 
     /* ************ Constructeurs *************
      ****************************************** */
-    public Article(int x) {     // Constructeur Bidon de débug
+    public Article(int x) {     // Constructeur Bidon de dï¿½bug
         this(x + "TITRE TEST blabla", x + "DESCRIPTION blablablablablablablablablablablabla",
                 x + "http://TESTLINK.mdr", new Date(new Long("1417561746190" + x)), x + "http://URLIMAGE.img", x);
     }
 
-    public Article() {      // Constructeur Bidon de débug
+    public Article() {      // Constructeur Bidon de dï¿½bug
         this("TITRE TEST blabla", "DESCRIPTION blablablablablablablablablablablabla",
                 "http://TESTLINK.mdr", new Date(new Long("1417561746190")), "http://URLIMAGE.img", 123);
     }
@@ -101,7 +101,7 @@ public class Article {
         this.urlImage = urlImage;
     }
 
-    /* **********   Redéfinitiaon de toString()   ************* */
+    /* **********   Redï¿½finitiaon de toString()   ************* */
     @Override
     public String toString() {
         return "RSS" + rssId + " TITRE:" + titre;
