@@ -45,31 +45,29 @@ public class BDD {
     /*
      *  inserer un flux rss dans la base de donn�es et returner son id 
      */
-    public int addRss(FluxRSS flux) throws ClassNotFoundException, SQLException,
+    public int getIdRss(String _url) throws ClassNotFoundException, SQLException,
             InstantiationException, IllegalAccessException {
-        int id = 0;
-        PreparedStatement req = (PreparedStatement) connexion.prepareStatement(
-                "INSERT INTO rssurl VALUES (NULL, ?, ?, NULL, NULL)",
-                Statement.RETURN_GENERATED_KEYS);
-        req.setString(1, flux.getNom());
-        req.setString(2, flux.getUrl());
-        req.executeUpdate();
-        ResultSet rs = req.getGeneratedKeys();
-        rs.next();
-        id = rs.getInt(1);
-        req.close();
+        String sql = "SELECT id FROM rssurl WHERE url = '" + _url + "'";
+        final Statement laRequete = connexion.createStatement();
+        ResultSet leResultat = laRequete.executeQuery(sql);
 
-        return id;
+        while (leResultat.next()) {
+            final int rssid = leResultat.getInt(7);
+            return rssid;
+        }
+        laRequete.close();
+
+        return -1;
     }
 
     public int addUser(User usr) {
-        int id=-1;
+        int id = -1;
         PreparedStatement req;
-        
+
         try {
             req = (PreparedStatement) connexion.prepareStatement(
-                "INSERT INTO user VALUES (null, ?, ?, ?)",
-                Statement.RETURN_GENERATED_KEYS);
+                    "INSERT INTO user VALUES (null, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
             req.setString(1, usr.getNom());
             req.setString(2, usr.getEmail());
             req.setString(3, usr.getPassword());
@@ -78,7 +76,7 @@ public class BDD {
             rs.next();
             id = rs.getInt(1);
             req.close();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.err.println("L'ajout d'un utlisateur A FOIRE !!!! " + e.getMessage());
         }
 
@@ -139,30 +137,29 @@ public class BDD {
 
         return listRss;
     }
-    
-    
+
     /* R�cup�re la couleur d'un flux � partir de son ID */
     public String getRssColor(int id) {
         List<FluxRSS> listRss = null;
-        
+
         try {
             listRss = rssList();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.err.println("SQL EXCEPTION !!!!!!!!!!!!!!! ON A PAS PU RECUP rssList -___-");
         }
-        
-        for(FluxRSS flux : listRss) {
-            if(flux.getId() == id)
+
+        for (FluxRSS flux : listRss) {
+            if (flux.getId() == id) {
                 return flux.getColor();
+            }
         }
         return "#000000";    // NOIR
     }
 
-    
     public User getUserByEmail(String email) throws SQLException {
         PreparedStatement requete;
         ResultSet rs = null;
-        
+
         try {
             requete = (PreparedStatement) connexion.prepareStatement(
                     "SELECT DISTINCT * FROM user WHERE email=?");
@@ -171,10 +168,10 @@ public class BDD {
             rs = requete.getResultSet();
             rs.next();
             return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
-        }
-        finally {
-            if(rs != null)
+        } finally {
+            if (rs != null) {
                 rs.close();
+            }
         }
     }
 
